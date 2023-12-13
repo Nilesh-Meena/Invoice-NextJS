@@ -1,8 +1,14 @@
+'use client';
+
 import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+// conditinally apply classes to an element (active links)
+import clsx from 'clsx';
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
@@ -16,20 +22,38 @@ const links = [
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
 ];
 
+// <a> there is a full page refresh on each page navigation
+// <Link> allows you to do client-side navigation with javascript. only render necessary components.
+// part of application are rendered on the server and part of it are rendered on the client.
+// making it feel like webapp.
+
+// <Link> components appear in the browser's viewport,
+//  Next.js automatically prefetches the code for the linked route in the background.
+// By the time the user clicks the link, the code for the destination page
+//  will already be loaded in the background,
+// and this is what makes the page transition near-instant
 export default function NavLinks() {
+  // usePathname() is a hook that returns the current pathname.
+  const pathname = usePathname();
+
   return (
     <>
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
-          <a
+          <Link
             key={link.name}
             href={link.href}
-            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+            className={clsx(
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              {
+                'bg-sky-100 text-blue-600': pathname === link.href,
+              },
+            )}
           >
             <LinkIcon className="w-6" />
             <p className="hidden md:block">{link.name}</p>
-          </a>
+          </Link>
         );
       })}
     </>
